@@ -242,7 +242,7 @@ export const ProblemsListView: React.FC<ProblemsListViewProps> = ({
             background: 'var(--bg-elevated)',
             borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             alignItems: 'center',
           }}>
             <button

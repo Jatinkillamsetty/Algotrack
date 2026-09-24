@@ -82,7 +82,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ problems, attemptL
           borderRadius: 'var(--radius-sm)',
           padding: '1rem',
           display: 'flex',
-          justify: 'space-around',
+          justifyContent: 'space-around',
           alignItems: 'center',
         }}>
           {stats.weeklyGrid.map((item, idx) => (

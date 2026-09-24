@@ -51,7 +51,7 @@ export const GoalsTimelineView: React.FC<GoalsTimelineViewProps> = ({ problems, 
           
           <div style={{
             display: 'flex',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             position: 'relative',
             zIndex: 2,
           }}>

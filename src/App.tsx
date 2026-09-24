@@ -299,7 +299,7 @@ export const App: React.FC = () => {
         background: 'var(--bg-surface)',
         borderTop: '1px solid var(--border-subtle)',
         display: 'none',
-        justify: 'space-around',
+        justifyContent: 'space-around',
         padding: '0.5rem 0.25rem',
         zIndex: 40,
       }} className="mobile-nav">

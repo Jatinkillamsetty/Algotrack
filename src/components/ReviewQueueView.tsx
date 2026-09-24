@@ -66,7 +66,7 @@ export const ReviewQueueView: React.FC<ReviewQueueViewProps> = ({
                   border: '1px solid var(--border-subtle)',
                   display: 'flex',
                   flexDirection: 'column',
-                  justify: 'space-between',
+                  justifyContent: 'space-between',
                   gap: '1rem',
                 }}
               >
@@ -103,7 +103,7 @@ export const ReviewQueueView: React.FC<ReviewQueueViewProps> = ({
                     fontFamily: 'var(--font-mono)',
                     color: 'var(--text-tertiary)',
                     display: 'flex',
-                    justify: 'space-between',
+                    justifyContent: 'space-between',
                   }}>
                     <span>Last Solved: <strong style={{ color: 'var(--text-secondary)' }}>{lastSolvedStr}</strong></span>
                     <span>Interval: <strong style={{ color: 'var(--accent-primary)' }}>{prob.review_interval_days || 1}d</strong></span>
