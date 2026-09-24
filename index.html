@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bento">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DSA RUN — Adaptive Personal DSA Training System for 798 LeetCode problems over 6 months." />
+  <title>DSA RUN — Adaptive Personal DSA Training System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
+  <script src="/public/dataset/problemsData.js"></script>
+  <style>
+    
+    [data-theme="bento"] {
+      --bg-base: #E7ECE7;
+      --bg-surface: #FFFFFF;
+      --bg-elevated: #F4F7F4;
+      --bg-hover: #EBEFEB;
+      --border-subtle: #D8DDD8;
+      --border-focus: #B5BEB5;
+      --text-primary: #111214;
+      --text-secondary: #5E626A;
+      --text-tertiary: #8B909A;
+      --status-success: #1FA662;
+      --status-success-bg: #E1F7EC;
+      --status-warning: #C78200;
+      --status-warning-bg: #FFF6E0;
+      --status-danger: #D93D42;
+      --status-danger-bg: #FDE8E9;
+      --accent-primary: #E2F773; 
+      --accent-primary-text: #111214;
+      --accent-subtle: rgba(226, 247, 115, 0.45);
+      --sidebar-bg: #161719;
+      --sidebar-text: #F3F4F6;
+      --card-radius: 20px;
+      --card-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+      --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+    
+    [data-theme="dark"] {
+      --bg-base: #0B0D0F;
+      --bg-surface: #111418;
+      --bg-elevated: #171B20;
+      --bg-hover: #1E232B;
+      --border-subtle: #252A31;
+      --border-focus: #3A4250;
+      --text-primary: #F3F4F6;
+      --text-secondary: #8B929D;
+      --text-tertiary: #58606D;
+      --status-success: #7DD3A8;
+      --status-success-bg: rgba(125, 211, 168, 0.1);
+      --status-warning: #F2C879;
+      --status-warning-bg: rgba(242, 200, 121, 0.1);
+      --status-danger: #E88383;
+      --status-danger-bg: rgba(232, 131, 131, 0.1);
+      --accent-primary: #7C9CFF;
+      --accent-primary-text: #0B0D0F;
+      --accent-subtle: rgba(124, 156, 255, 0.12);
+      --sidebar-bg: #111418;
+      --sidebar-text: #F3F4F6;
+      --card-radius: 8px;
+      --card-shadow: none;
+      --font-display: 'Inter', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      transition: background-color 200ms ease;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+    .mono { font-family: 'Geist Mono', Consolas, monospace; }
+    .num-stat { font-family: 'Geist Mono', Consolas, monospace; font-weight: 700; letter-spacing: -0.03em; }
+    .command-container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1rem 5rem 1rem; }
+    .card {
+      background: var(--bg-surface); border: 1px solid var(--border-subtle);
+      border-radius: var(--card-radius); padding: 1.5rem; boxShadow: var(--card-shadow);
+      transition: transform 150ms ease;
+    }
+    .card-highlight {
+      background: var(--accent-primary); color: var(--accent-primary-text);
+      border: 1px solid rgba(0, 0, 0, 0.05); border-radius: var(--card-radius); padding: 1.5rem;
+    }
+    .card-dark {
+      background: #161719; color: #F3F4F6; border-radius: var(--card-radius); padding: 1.5rem;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.6rem;
+      border-radius: 20px; font-size: 0.725rem; font-weight: 700; text-transform: uppercase;
+    }
+    .badge-easy { color: var(--status-success); background: var(--status-success-bg); border: 1px solid rgba(31, 166, 98, 0.2); }
+    .badge-medium { color: #8A5B00; background: var(--status-warning-bg); border: 1px solid rgba(199, 130, 0, 0.2); }
+    .badge-hard { color: var(--status-danger); background: var(--status-danger-bg); border: 1px solid rgba(217, 61, 66, 0.2); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; font-size: 0.825rem; font-weight: 600; border-radius: 30px;
+      border: 1px solid var(--border-subtle); background: var(--bg-surface);
+      color: var(--text-primary); cursor: pointer; transition: all 150ms ease; text-decoration: none;
+    }
+    .btn:hover { background: var(--bg-hover); border-color: var(--border-focus); transform: translateY(-1px); }
+    .btn-primary { background: var(--text-primary); color: var(--bg-surface); border-color: var(--text-primary); font-weight: 700; }
+    .btn-lime { background: var(--accent-primary); color: #111214; border-color: var(--accent-primary); font-weight: 700; }
+    .btn-sm { padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 20px; }
+    .input {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 12px; color: var(--text-primary); padding: 0.55rem 0.85rem;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif;
+    }
+    .input:focus { border-color: var(--text-primary); outline: none; }
+    .cmd-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .cmd-table th {
+      padding: 0.75rem 1rem; font-size: 0.725rem; font-weight: 700;
+      color: var(--text-secondary); text-transform: uppercase;
+      border-bottom: 1px solid var(--border-subtle); background: var(--bg-surface);
+    }
+    .cmd-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); font-size: 0.875rem; }
+    .cmd-table tr:hover td { background: var(--bg-elevated); }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10, 11, 13, 0.75);
+      backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem;
+    }
+    .modal-content {
+      background: var(--bg-surface); border: 1px solid var(--border-subtle);
+      border-radius: 24px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .progress-bar-track { width: 100%; height: 10px; background: var(--bg-elevated); border-radius: 6px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--text-primary); transition: width 250ms ease; }
+    .timeline-session { position: relative; padding-left: 1.5rem; }
+    .timeline-session::before {
+      content: ''; position: absolute; left: 6px; top: 10px; bottom: 10px;
+      width: 2px; background: var(--border-subtle);
+    }
+    .timeline-item { position: relative; margin-bottom: 1.25rem; }
+    .timeline-node {
+      position: absolute; left: -1.5rem; top: 1.1rem; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--bg-base); border: 2px solid var(--border-subtle); transform: translateX(-50%);
+    }
+    .timeline-node.completed { border-color: var(--status-success); background: var(--status-success); }
+    .timeline-node.active { border-color: var(--text-primary); background: var(--accent-primary); }
+    .timeline-node.failed { border-color: var(--status-danger); background: var(--status-danger); }
+    
+    .graph-node {
+      background: var(--bg-surface); border: 2px solid var(--border-subtle);
+      border-radius: 16px; padding: 0.85rem 1.2rem; cursor: pointer; transition: all 150ms ease;
+    }
+    .graph-node:hover { border-color: var(--text-primary); transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+    const MISTAKE_CATEGORIES = [
+      'Off-by-one', 'Wrong boundary', 'Wrong data structure', 'Wrong complexity',
+      'Edge case missed', 'Logic error', 'Implementation error', 'Misunderstood pattern', 'Syntax/API issue'
+    ];
+    const CANONICAL_TOPICS = [
+      'Arrays', 'Two Pointers', 'Sliding Window', 'Binary Search', 'Linked List',
+      'Trees & BST', 'Graphs & BFS/DFS', 'Dynamic Programming', 'Heap & Priority Queue',
+      'Stack & Queue', 'Backtracking', 'Greedy', 'Bit Manipulation', 'Hash Table & String', 'Math & SQL'
+    ];
+    const COMPANY_TAGS = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Uber'];
+    const STORAGE_KEYS = {
+      PROBLEMS: 'dsa_run_problems_v1',
+      PLAN: 'dsa_run_plan_v1',
+      ATTEMPTS: 'dsa_run_attempts_v1',
+      MISTAKES: 'dsa_run_mistakes_v1',
+      COLLECTIONS: 'dsa_run_collections_v1',
+      CALENDAR: 'dsa_run_calendar_v1',
+      THEME: 'dsa_run_theme_v1'
+    };
+    const DEFAULT_PLAN = {
+      total_problems: 798,
+      start_date: new Date().toISOString().split('T')[0],
+      target_date: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      days_per_week: 7,
+      daily_target: 5,
+      is_onboarded: false,
+      recovery_plan_active: false,
+      recovery_target: 6,
+      reminders: { morning_time: '08:00', evening_time: '20:00', enabled: true }
+    };
+    function loadProblems() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.PROBLEMS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.length >= 700) return parsed;
+        }
+      } catch (e) {}
+      if (window.RAW_798_PROBLEMS && window.RAW_798_PROBLEMS.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.PROBLEMS, JSON.stringify(window.RAW_798_PROBLEMS));
+        return window.RAW_798_PROBLEMS;
+      }
+      return [];
+    }
+    function saveProblems(probs) {
+      localStorage.setItem(STORAGE_KEYS.PROBLEMS, JSON.stringify(probs));
+    }
+    function loadPlan() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.PLAN);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return DEFAULT_PLAN;
+    }
+    function savePlan(p) { localStorage.setItem(STORAGE_KEYS.PLAN, JSON.stringify(p)); }
+    function loadMistakes() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.MISTAKES);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {};
+    }
+    function saveMistakes(m) { localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(m)); }
+    
+    function computeProblemPriority(problem) {
+      let score = 0;
+      
+      score += (problem.frequency || 50) * 0.4;
+      
+      if (problem.next_review_at && problem.next_review_at <= new Date().toISOString().split('T')[0]) {
+        score += 60;
+      }
+      
+      if (problem.status === 'FAILED') score += 70;
+      
+      if (problem.confidence === 'Weak') score += 50;
+      return Math.round(score);
+    }
+    function calculatePace(problems, plan) {
+      const total = problems.length || 798;
+      const solved = problems.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length;
+      const remaining = total - solved;
+      const start = new Date(plan.start_date);
+      const target = new Date(plan.target_date);
+      const now = new Date();
+      const totalDays = Math.max(1, Math.ceil((target - start) / (1000 * 3600 * 24)));
+      const elapsedDays = Math.max(0, Math.floor((now - start) / (1000 * 3600 * 24)));
+      const remainingDays = Math.max(1, totalDays - elapsedDays);
+      const activeDaysRatio = (plan.days_per_week || 7) / 7;
+      const remainingActiveDays = Math.max(1, Math.ceil(remainingDays * activeDaysRatio));
+      const expectedSolved = Math.min(total, Math.round((total / totalDays) * elapsedDays));
+      const delta = solved - expectedSolved;
+      const recommendedPace = Number((remaining / remainingActiveDays).toFixed(1));
+      const dailyTarget = Math.max(3, Math.ceil(recommendedPace));
+      return { total, solved, remaining, totalDays, elapsedDays, remainingDays, remainingActiveDays, expectedSolved, delta, recommendedPace, dailyTarget };
+    }
+    function generateDailySchedule(problems, plan) {
+      const pace = calculatePace(problems, plan);
+      const todayStr = new Date().toISOString().split('T')[0];
+      
+      const mustDoProblems = problems.filter(p => {
+        if (p.status === 'SOLVED' || p.status === 'MASTERED') return false;
+        const isPastScheduled = p.scheduled_date && p.scheduled_date < todayStr;
+        const isFailed = p.status === 'FAILED';
+        const isOverdueReview = p.status === 'NEEDS_REVIEW' || (p.next_review_at && p.next_review_at < todayStr);
+        return isPastScheduled || isFailed || isOverdueReview;
+      });
+      
+      const dueReviews = problems.filter(p => p.status === 'NEEDS_REVIEW' || (p.next_review_at && p.next_review_at <= todayStr));
+      
+      
+      const touchedToday = problems.filter(p => 
+        (p.last_attempted_at && p.last_attempted_at.startsWith(todayStr)) || 
+        (p.first_solved_at && p.first_solved_at.startsWith(todayStr)) ||
+        (p.scheduled_date === todayStr)
+      );
+      const scheduled = [...touchedToday];
+      const targetCount = plan.recovery_plan_active ? plan.recovery_target : pace.dailyTarget;
+      const needed = Math.max(0, targetCount - scheduled.length);
+      const mustDoIds = new Set(mustDoProblems.map(m => m.id));
+      const selectedIds = new Set(scheduled.map(s => s.id));
+      if (needed > 0) {
+        const pool = problems.filter(p => 
+          (p.status === 'NOT_STARTED' || p.status === 'IN_PROGRESS' || p.status === 'FAILED') && 
+          !selectedIds.has(p.id) && 
+          !mustDoIds.has(p.id)
+        );
+        
+        
+        pool.sort((a, b) => computeProblemPriority(b) - computeProblemPriority(a));
+        const easy = pool.filter(p => p.difficulty === 'Easy');
+        const med = pool.filter(p => p.difficulty === 'Medium');
+        const hard = pool.filter(p => p.difficulty === 'Hard');
+        const added = [];
+        if (easy.length > 0 && added.length < needed) added.push(easy[0]);
+        while (med.length > 0 && added.length < needed - 1) {
+          const nextMed = med.find(m => !added.includes(m));
+          if (nextMed) added.push(nextMed); else break;
+        }
+        if (hard.length > 0 && added.length < needed) {
+          const nextHard = hard.find(h => !added.includes(h));
+          if (nextHard) added.push(nextHard);
+        }
+        while (added.length < needed && pool.length > 0) {
+          const fallback = pool.find(p => !added.includes(p));
+          if (fallback) added.push(fallback); else break;
+        }
+        
+        added.forEach(p => {
+          p.scheduled_date = todayStr;
+        });
+        scheduled.push(...added);
+      }
+      return { mustDoProblems, todaysProblems: scheduled, dueReviews, pace };
+    }
+    const MOTIVATIONAL_QUOTES = [
+      { text: "Consistency beats intensity. 3 problems today is 10x better than cramming 20 on Sunday.", author: "Linear DSA Methodology" },
+      { text: "Top FAANG engineers don't memorize solutions; they master the 15 core patterns.", author: "LeetCode Mastery System" },
+      { text: "Every bug you debug today is an interview question you dominate tomorrow.", author: "Problem Solver Rule #1" },
+      { text: "Dynamic Programming is just recursion with memory. Demystify the pattern step-by-step.", author: "DP Training Guide" },
+      { text: "Slow is smooth, smooth is fast. Understand the constraints before writing code.", author: "Engineering Mindset" },
+      { text: "Graph problems are just decisions in space. Map the vertices, traverse with intent.", author: "Graph Strategy" }
+    ];
+    function calculateXPAndLevel(problems) {
+      let totalXP = 0;
+      let easyCount = 0;
+      let medCount = 0;
+      let hardCount = 0;
+      let masteredCount = 0;
+      problems.forEach(p => {
+        if (p.status === 'SOLVED' || p.status === 'MASTERED') {
+          if (p.difficulty === 'Easy') { totalXP += 10; easyCount++; }
+          else if (p.difficulty === 'Medium') { totalXP += 25; medCount++; }
+          else if (p.difficulty === 'Hard') { totalXP += 50; hardCount++; }
+          if (p.status === 'MASTERED') { totalXP += 15; masteredCount++; }
+        }
+      });
+      let rank = '🌱 Code Novice';
+      let nextLevelXP = 100;
+      let level = 1;
+      if (totalXP >= 2000) { rank = '👑 Grandmaster (Top 1%)'; nextLevelXP = 5000; level = 6; }
+      else if (totalXP >= 1000) { rank = '🧠 DSA Master'; nextLevelXP = 2000; level = 5; }
+      else if (totalXP >= 600) { rank = '🗡️ LeetCode Specialist'; nextLevelXP = 1000; level = 4; }
+      else if (totalXP >= 300) { rank = '🚀 Pattern Explorer'; nextLevelXP = 600; level = 3; }
+      else if (totalXP >= 100) { rank = '⚡ Algorithm Apprentice'; nextLevelXP = 300; level = 2; }
+      return { totalXP, rank, nextLevelXP, level, easyCount, medCount, hardCount, masteredCount };
+    }
+    
+    function App() {
+      const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.THEME) || 'bento');
+      const [problems, setProblems] = useState(loadProblems());
+      const [plan, setPlan] = useState(loadPlan());
+      const [mistakes, setMistakes] = useState(loadMistakes());
+      const [activeTab, setActiveTab] = useState('today');
+      
+      const [showCmdPalette, setShowCmdPalette] = useState(false);
+      const [showStreakModal, setShowStreakModal] = useState(false);
+      
+      const [pomoMode, setPomoMode] = useState('focus'); 
+      const [pomoDurationMins, setPomoDurationMins] = useState(25);
+      const [pomoTimeLeft, setPomoTimeLeft] = useState(25 * 60);
+      const [pomoRunning, setPomoRunning] = useState(false);
+      const [pomoCompleted, setPomoCompleted] = useState(0);
+      const [pomoTotalMinsFocused, setPomoTotalMinsFocused] = useState(0);
+      const [pomoLogs, setPomoLogs] = useState([]);
+      const [pomoTargetProb, setPomoTargetProb] = useState('');
+      const switchPomoDuration = (mins) => {
+        const m = Math.max(1, Math.min(180, mins));
+        setPomoDurationMins(m);
+        setPomoTimeLeft(m * 60);
+        setPomoRunning(false);
+        setPomoMode('focus');
+      };
+      const switchPomoMode = (mode, customMins = pomoDurationMins) => {
+        setPomoRunning(false);
+        setPomoMode(mode);
+        if (mode === 'focus') setPomoTimeLeft(customMins * 60);
+        else if (mode === 'shortBreak') setPomoTimeLeft(5 * 60);
+        else if (mode === 'longBreak') setPomoTimeLeft(15 * 60);
+      };
+      useEffect(() => {
+        let interval = null;
+        if (pomoRunning && pomoTimeLeft > 0) {
+          interval = setInterval(() => {
+            setPomoTimeLeft(prev => prev - 1);
+          }, 1000);
+        } else if (pomoRunning && pomoTimeLeft === 0) {
+          setPomoRunning(false);
+          try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+            osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.6);
+          } catch (e) {}
+          if (pomoMode === 'focus') {
+            setPomoCompleted(c => c + 1);
+            setPomoTotalMinsFocused(t => t + pomoDurationMins);
+            const newLog = {
+              id: Date.now(),
+              timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              durationMins: pomoDurationMins,
+              problemTitle: pomoTargetProb || 'General Focus Session',
+              type: 'Focus Session'
+            };
+            setPomoLogs(prev => [newLog, ...prev]);
+            alert(`🎉 ${pomoDurationMins}-minute Pomodoro Complete! Take a short break.`);
+            switchPomoMode('shortBreak');
+          } else {
+            alert("☕ Break Complete! Ready for another focus session?");
+            switchPomoMode('focus');
+          }
+        }
+        return () => clearInterval(interval);
+      }, [pomoRunning, pomoTimeLeft, pomoMode, pomoDurationMins, pomoTargetProb]);
+      const formatPomoTime = (sec) => {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      };
+      const formatPomoTimeHours = (sec) => {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        if (h > 0) {
+          return `${h.toString().padStart(2, '0')} : ${m.toString().padStart(2, '0')} : ${s.toString().padStart(2, '0')}`;
+        }
+        return `${m.toString().padStart(2, '0')} : ${s.toString().padStart(2, '0')}`;
+      };
+      
+      const [showOnboarding, setShowOnboarding] = useState(!plan.is_onboarded);
+      const [selectedProblem, setSelectedProblem] = useState(null);
+      const [blindResolveProblem, setBlindResolveProblem] = useState(null);
+      const [showDailyBrief, setShowDailyBrief] = useState(false);
+      const [showTimeBudget, setShowTimeBudget] = useState(false);
+      const [showEndOfDay, setShowEndOfDay] = useState(false);
+      const [showRandom, setShowRandom] = useState(false);
+      const [showNotifications, setShowNotifications] = useState(false);
+      
+      const [searchTerm, setSearchTerm] = useState('');
+      const [filterDiff, setFilterDiff] = useState('ALL');
+      const [filterStatus, setFilterStatus] = useState('ALL');
+      const [filterTopic, setFilterTopic] = useState('ALL');
+      const [currentPage, setCurrentPage] = useState(1);
+      const [pageSize, setPageSize] = useState(50);
+      useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(STORAGE_KEYS.THEME, theme);
+      }, [theme]);
+      
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            setShowCmdPalette(prev => !prev);
+          }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, []);
+      const toggleTheme = () => setTheme(prev => prev === 'bento' ? 'dark' : 'bento');
+      const updateProblems = (newProbs) => {
+        setProblems(newProbs);
+        saveProblems(newProbs);
+        const solved = newProbs.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length;
+        if (solved >= 798 && typeof confetti === 'function') {
+          confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+      };
+      const handleSolve = (prob, confidence = 'Strong', solveTimeSec = 0, mistakeCat = null) => {
+        const nowIso = new Date().toISOString();
+        const isMasteredCandidate = (prob.attempt_count || 0) >= 1 && confidence === 'Strong';
+        const updated = problems.map(p => {
+          if (p.id === prob.id) {
+            const nextRevDays = (p.review_interval_days || 0) === 0 ? 1 : p.review_interval_days * 2;
+            const nextDate = new Date(Date.now() + nextRevDays * 86400000).toISOString().split('T')[0];
+            return {
+              ...p,
+              status: isMasteredCandidate ? 'MASTERED' : 'SOLVED',
+              confidence,
+              solve_time: solveTimeSec > 0 ? solveTimeSec : p.solve_time,
+              first_solved_at: p.first_solved_at || nowIso,
+              last_attempted_at: nowIso,
+              attempt_count: (p.attempt_count || 0) + 1,
+              next_review_at: nextDate,
+              review_interval_days: nextRevDays
+            };
+          }
+          return p;
+        });
+        updateProblems(updated);
+        
+        if (mistakeCat) {
+          const updatedMistakes = { ...mistakes, [mistakeCat]: (mistakes[mistakeCat] || 0) + 1 };
+          setMistakes(updatedMistakes);
+          saveMistakes(updatedMistakes);
+        }
+      };
+      const handleFail = (prob) => {
+        const nowIso = new Date().toISOString();
+        const updated = problems.map(p => {
+          if (p.id === prob.id) {
+            const nextDate = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+            return {
+              ...p, status: 'FAILED', confidence: 'Weak',
+              last_attempted_at: nowIso,
+              attempt_count: (p.attempt_count || 0) + 1,
+              next_review_at: nextDate,
+              review_interval_days: 1
+            };
+          }
+          return p;
+        });
+        updateProblems(updated);
+      };
+      const simulateNextDay = () => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        const updated = problems.map(p => {
+          if (p.scheduled_date === todayStr && p.status !== 'SOLVED' && p.status !== 'MASTERED') {
+            return { ...p, scheduled_date: yesterday };
+          }
+          return p;
+        });
+        updateProblems(updated);
+      };
+      const redoSim = () => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const updated = problems.map(p => {
+          if (p.scheduled_date && p.scheduled_date !== todayStr && p.status !== 'SOLVED' && p.status !== 'MASTERED') {
+            return { ...p, scheduled_date: todayStr };
+          }
+          return p;
+        });
+        updateProblems(updated);
+      };
+      const resetToDayOne = () => {
+        if (confirm("Reset everything back to Day 1? This clears all simulated dates, progress, and backlog, giving you a fresh Day 1 start.")) {
+          const todayStr = new Date().toISOString().split('T')[0];
+          const targetDate = new Date(Date.now() + 180 * 86400000).toISOString().split('T')[0];
+          
+          const cleanProbs = window.RAW_798_PROBLEMS.map(p => ({
+            ...p,
+            status: 'NOT_STARTED',
+            first_solved_at: null,
+            last_attempted_at: null,
+            solve_time: null,
+            confidence: null,
+            notes: { approach: '', key_insight: '', mistake: '', pattern: '' },
+            next_review_at: null,
+            review_interval_days: 0,
+            attempt_count: 0,
+            hint_used: false,
+            solution_viewed: false,
+            scheduled_date: null
+          }));
+          const cleanPlan = {
+            ...DEFAULT_PLAN,
+            start_date: todayStr,
+            target_date: targetDate,
+            is_onboarded: true
+          };
+          updateProblems(cleanProbs);
+          setPlan(cleanPlan);
+          savePlan(cleanPlan);
+          setMistakes({});
+          saveMistakes({});
+        }
+      };
+      const scheduleData = generateDailySchedule(problems, plan);
+      const solvedTotal = problems.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length;
+      const masteredTotal = problems.filter(p => p.status === 'MASTERED').length;
+      const pctTotal = ((solvedTotal / problems.length) * 100).toFixed(1);
+      
+      const filteredProblems = problems.filter(p => {
+        if (searchTerm) {
+          const q = searchTerm.toLowerCase();
+          if (!p.title.toLowerCase().includes(q) && !p.id.toString().includes(q)) return false;
+        }
+        if (filterDiff !== 'ALL' && p.difficulty !== filterDiff) return false;
+        if (filterStatus !== 'ALL' && p.status !== filterStatus) return false;
+        if (filterTopic !== 'ALL' && p.topic !== filterTopic) return false;
+        return true;
+      });
+      const effectivePageSize = pageSize === 0 ? filteredProblems.length : pageSize;
+      const totalPages = Math.max(1, Math.ceil(filteredProblems.length / (effectivePageSize || 1)));
+      const paginatedProblems = filteredProblems.slice((currentPage - 1) * effectivePageSize, currentPage * effectivePageSize);
+      const userStats = calculateXPAndLevel(problems);
+      return (
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          
+          <aside style={{
+            width: '70px', background: 'var(--sidebar-bg)', color: 'var(--sidebar-text)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between',
+            padding: '1.25rem 0.5rem', position: 'sticky', top: 0, height: '100vh', zIndex: 60
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
+              <div onClick={() => setShowOnboarding(true)} style={{
+                width: '42px', height: '42px', borderRadius: '14px', border: '1px solid rgba(255, 255, 255, 0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 700, cursor: 'pointer',
+                background: 'rgba(255, 255, 255, 0.05)'
+              }} title="Config">
+                +
+              </div>
+              {[
+                { id: 'today', icon: '⚡', label: "Today's Run" },
+                { id: 'pomo', icon: '⏱️', label: 'Pomodoro Command' },
+                { id: 'problems', icon: '📋', label: 'Catalog' },
+                { id: 'analytics', icon: '📊', label: 'Analytics & Pace' }
+              ].map(item => (
+                <button key={item.id} onClick={() => setActiveTab(item.id)} style={{
+                  width: '44px', height: '44px', borderRadius: '14px',
+                  background: activeTab === item.id ? '#2A2C30' : 'transparent',
+                  border: 'none', color: '#F3F4F6', fontSize: '1.1rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                }} title={item.label}>
+                  {item.icon}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+              <button onClick={() => setShowCmdPalette(true)} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#2A2C30', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#F3F4F6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 800 }} title="Command Palette (Ctrl+K)">
+                ⌘K
+              </button>
+              <button onClick={toggleTheme} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#2A2C30', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#F3F4F6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>
+                {theme === 'bento' ? '☀️' : '🌙'}
+              </button>
+            </div>
+          </aside>
+          
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+            
+            <header style={{ padding: '1.25rem 2rem 0.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)', lineHeight: 1.15 }}>
+                  Adaptive Personal <span style={{ display: 'inline-block', padding: '0.1rem 0.6rem', borderRadius: '30px', background: 'var(--accent-primary)', color: '#111214', fontSize: '1.2rem', verticalAlign: 'middle' }}>DSA System</span>
+                </h1>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <button onClick={() => setShowStreakModal(true)} className="btn btn-sm" style={{ background: 'rgba(255, 126, 51, 0.12)', color: '#FF7E33', borderColor: 'rgba(255, 126, 51, 0.35)', fontWeight: 800 }}>
+                  🔥 Streak &bull; Level {userStats.level} ({userStats.totalXP} XP)
+                </button>
+                <button onClick={() => setShowTimeBudget(true)} className="btn btn-sm">⏱️ Time Budget</button>
+                <button onClick={() => setShowCmdPalette(true)} className="btn btn-sm">🔍 Search (Ctrl+K)</button>
+                <button onClick={() => setShowRandom(true)} className="btn btn-lime">+ Scenario Drill</button>
+              </div>
+            </header>
+            
+            <div style={{ padding: '0.75rem 2rem', display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
+              {[
+                { id: 'today', label: "Today's Run", badge: scheduleData.mustDoProblems.length },
+                { id: 'pomo', label: '⏱️ Pomodoro Command' },
+                { id: 'problems', label: 'Problem Catalog' },
+                { id: 'analytics', label: 'Analytics & Pace' }
+              ].map(item => (
+                <button key={item.id} onClick={() => setActiveTab(item.id)} style={{
+                  padding: '0.5rem 1rem', borderRadius: '24px', fontSize: '0.85rem',
+                  fontWeight: activeTab === item.id ? 700 : 600,
+                  color: activeTab === item.id ? 'var(--bg-surface)' : 'var(--text-primary)',
+                  background: activeTab === item.id ? 'var(--text-primary)' : 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)', cursor: 'pointer', whiteSpace: 'nowrap'
+                }}>
+                  {item.label}
+                  {item.badge > 0 && <span style={{ marginLeft: '0.4rem', background: '#D93D42', color: '#FFFFFF', borderRadius: '10px', fontSize: '0.65rem', fontWeight: 800, padding: '0.1rem 0.4rem' }}>{item.badge}</span>}
+                </button>
+              ))}
+            </div>
+            
+            <main className="command-container" style={{ paddingTop: '0.75rem' }}>
+              
+              {activeTab === 'today' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  
+                  <div className="card" style={{
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '16px',
+                    padding: '1.25rem 1.5rem',
+                    marginBottom: '1rem'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FFFFFF', background: '#D93D42', padding: '0.15rem 0.6rem', borderRadius: '10px' }}>
+                          🍅 POMODORO FOCUS TIMER
+                        </span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                          Deep Work Technique (25m Focus / 5m Break)
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <button onClick={() => switchPomoMode('focus')} style={{ padding: '0.35rem 0.75rem', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, border: 'none', background: pomoMode === 'focus' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'focus' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          🎯 25m Focus
+                        </button>
+                        <button onClick={() => switchPomoMode('shortBreak')} style={{ padding: '0.35rem 0.75rem', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, border: 'none', background: pomoMode === 'shortBreak' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'shortBreak' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          ☕ 5m Short Break
+                        </button>
+                        <button onClick={() => switchPomoMode('longBreak')} style={{ padding: '0.35rem 0.75rem', borderRadius: '14px', fontSize: '0.75rem', fontWeight: 700, border: 'none', background: pomoMode === 'longBreak' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'longBreak' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          🌴 15m Long Break
+                        </button>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '3.2rem', fontWeight: 800, lineHeight: 1, color: pomoRunning ? 'var(--accent-primary)' : 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                          {formatPomoTime(pomoTimeLeft)}
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                          {pomoMode === 'focus' ? '🎯 Deep Problem Solving Session' : pomoMode === 'shortBreak' ? '☕ Rest & Hydrate' : '🌴 Long Rest & Review'}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <button onClick={() => setPomoRunning(r => !r)} className="btn btn-lime" style={{ minWidth: '120px', fontWeight: 800, padding: '0.6rem 1.25rem' }}>
+                          {pomoRunning ? '⏸ PAUSE' : '▶ START FOCUS'}
+                        </button>
+                        <button onClick={() => switchPomoMode(pomoMode)} className="btn btn-sm">
+                          ↺ Reset
+                        </button>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'var(--bg-elevated)', padding: '0.45rem 0.75rem', borderRadius: '12px', fontWeight: 700 }}>
+                          🍅 {pomoCompleted} Completed
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                    <div className="card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span style={{ fontWeight: 700 }}>⚙️ Mastered vs Solved</span>
+                        <span className="badge badge-easy">{masteredTotal} Mastered</span>
+                      </div>
+                      <div className="num-stat" style={{ fontSize: '2.5rem', lineHeight: 1 }}>
+                        {solvedTotal} <span style={{ fontSize: '1.2rem', color: 'var(--text-tertiary)' }}>/ {problems.length}</span>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
+                        {pctTotal}% catalog verified solved
+                      </div>
+                    </div>
+                    <div className="card-highlight">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span style={{ fontWeight: 800, color: '#111214' }}>🔄 Adaptive Pace</span>
+                        <span style={{ background: '#111214', color: '#E2F773', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.725rem', fontWeight: 800 }}>
+                          {scheduleData.pace.recommendedPace} / day
+                        </span>
+                      </div>
+                      <div className="num-stat" style={{ fontSize: '2.5rem', lineHeight: 1, color: '#111214' }}>
+                        {scheduleData.todaysProblems.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length} <span style={{ fontSize: '1.2rem', opacity: 0.6 }}>/ {scheduleData.todaysProblems.length}</span>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: '#111214', opacity: 0.8, marginTop: '0.35rem', fontWeight: 600 }}>
+                        Today's adaptive run progress
+                      </div>
+                    </div>
+                    <div className="card-dark" style={{ display: 'flex', flexDirection: 'column', justify: 'space-between' }}>
+                      <div>
+                        <div style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                          Smart Daily Brief ↗
+                        </div>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                          Dynamic problem priority & decay detector active.
+                        </p>
+                      </div>
+                      <button onClick={() => setShowDailyBrief(true)} className="btn" style={{ background: '#FFFFFF', color: '#111214', border: 'none', fontWeight: 800, width: 'fit-content' }}>
+                        View Morning Brief ▷
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {scheduleData.mustDoProblems.length > 0 && (
+                    <div className="card" style={{
+                      border: '2px solid rgba(217, 61, 66, 0.45)',
+                      background: 'rgba(217, 61, 66, 0.05)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                            <span style={{ background: '#D93D42', color: '#FFFFFF', padding: '0.15rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              HIGH PRIORITY BACKLOG
+                            </span>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 700 }}>
+                              ALL PREVIOUSLY MISSED & FAILED QUESTIONS
+                            </span>
+                          </div>
+                          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, fontFamily: 'var(--font-display)', margin: 0, color: 'var(--text-primary)' }}>
+                            ⚡ MUST DO ({scheduleData.mustDoProblems.length})
+                          </h2>
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                          <strong style={{ color: '#D93D42' }}>{scheduleData.mustDoProblems.length}</strong> missed/failed question(s)
+                        </div>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 0, marginBottom: '1.25rem' }}>
+                        All questions previously missed, skipped, failed, or overdue from past sessions are isolated here into this high-priority <strong>MUST DO</strong> section. Complete them to maintain zero backlog!
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {scheduleData.mustDoProblems.map(prob => (
+                          <div key={prob.id} style={{
+                            background: 'var(--bg-surface)',
+                            border: '1px solid rgba(217, 61, 66, 0.3)',
+                            borderRadius: '14px',
+                            padding: '1rem 1.25rem',
+                            display: 'flex',
+                            justify: 'space-between',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: '0.75rem'
+                          }}>
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                                <span className="mono" style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 700 }}>#{prob.id}</span>
+                                <span className={`badge badge-${prob.difficulty.toLowerCase()}`}>{prob.difficulty}</span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', background: 'var(--bg-elevated)', padding: '0.15rem 0.55rem', borderRadius: '12px' }}>{prob.topic}</span>
+                                <span style={{ fontSize: '0.7rem', color: '#D93D42', background: 'rgba(217, 61, 66, 0.12)', padding: '0.1rem 0.55rem', borderRadius: '10px', fontWeight: 700 }}>
+                                  {prob.status === 'FAILED' ? '⚠️ Failed Attempt' :
+                                   prob.next_review_at && prob.next_review_at < new Date().toISOString().split('T')[0] ? '🔄 Review Overdue' :
+                                   `📅 Missed: ${prob.scheduled_date || 'Past Session'}`}
+                                </span>
+                              </div>
+                              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, cursor: 'pointer' }} onClick={() => setSelectedProblem(prob)}>
+                                {prob.title}
+                              </h3>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <a href={prob.url} target="_blank" rel="noopener noreferrer" className="btn btn-sm">LEETCODE &rarr;</a>
+                              <button onClick={() => handleSolve(prob, 'Strong')} className="btn btn-sm btn-lime">✓ Solve Now</button>
+                              <button onClick={() => handleFail(prob)} className="btn btn-sm" style={{ color: 'var(--status-danger)', borderColor: 'rgba(217, 61, 66, 0.3)' }}>✕ Fail</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                      <div>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 700 }}>CENTRAL FOCUS</div>
+                        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>TODAY'S RUN SESSION</h2>
+                      </div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        <strong>{scheduleData.todaysProblems.length}</strong> problems &middot; <strong style={{ color: 'var(--status-success)' }}>{scheduleData.todaysProblems.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length}</strong> completed
+                      </div>
+                    </div>
+                    <div className="timeline-session">
+                      {scheduleData.todaysProblems.map((prob, idx) => {
+                        const isSolved = prob.status === 'SOLVED' || prob.status === 'MASTERED';
+                        const isFailed = prob.status === 'FAILED';
+                        const isFirstActive = !isSolved && scheduleData.todaysProblems.findIndex(p => p.status !== 'SOLVED' && p.status !== 'MASTERED') === idx;
+                        return (
+                          <div key={prob.id} className="timeline-item">
+                            <div className={`timeline-node ${isSolved ? 'completed' : isFailed ? 'failed' : isFirstActive ? 'active' : ''}`} />
+                            <div style={{
+                              background: isFirstActive ? 'var(--bg-elevated)' : 'var(--bg-surface)',
+                              border: `1px solid ${isFirstActive ? 'var(--text-primary)' : 'var(--border-subtle)'}`,
+                              borderRadius: '16px', padding: '1.1rem 1.35rem', opacity: isSolved ? 0.65 : 1
+                            }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                                    <span className="mono" style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 700 }}>#{prob.id}</span>
+                                    <span className={`badge badge-${prob.difficulty.toLowerCase()}`}>{prob.difficulty}</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', background: 'var(--bg-elevated)', padding: '0.15rem 0.55rem', borderRadius: '12px' }}>{prob.topic}</span>
+                                  </div>
+                                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, textDecoration: isSolved ? 'line-through' : 'none', cursor: 'pointer' }} onClick={() => setSelectedProblem(prob)}>
+                                    {prob.title}
+                                  </h3>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)', marginTop: '0.3rem' }}>
+                                    Freq: {prob.frequency}% &bull; Acc: {prob.acceptance_rate}% &bull; Priority Score: {computeProblemPriority(prob)}
+                                  </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <a href={prob.url} target="_blank" rel="noopener noreferrer" className="btn btn-sm">LEETCODE &rarr;</a>
+                                  {isSolved && (
+                                    <button onClick={() => setBlindResolveProblem(prob)} className="btn btn-sm">
+                                      🎯 Blind Re-Solve
+                                    </button>
+                                  )}
+                                  {!isSolved ? (
+                                    <>
+                                      <button onClick={() => handleSolve(prob, 'Strong')} className="btn btn-sm btn-lime">✓ Solved</button>
+                                      <button onClick={() => handleFail(prob)} className="btn btn-sm" style={{ color: 'var(--status-danger)', borderColor: 'rgba(217, 61, 66, 0.3)' }}>✕ Failed</button>
+                                    </>
+                                  ) : (
+                                    <button onClick={() => setSelectedProblem(prob)} className="btn btn-sm" style={{ color: 'var(--status-success)' }}>✓ Details</button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'pomo' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div className="card" style={{
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '24px',
+                    padding: '2.5rem 2rem',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    backgroundImage: 'radial-gradient(var(--border-subtle) 1px, transparent 1px)',
+                    backgroundSize: '28px 28px'
+                  }}>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#111214', background: '#E2F773', padding: '0.2rem 0.6rem', borderRadius: '10px' }}>
+                            🍅 POMODORO COMMAND CENTER
+                          </span>
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                            Custom Deep Work & Focus Tracker
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <button onClick={() => switchPomoMode('focus')} style={{ padding: '0.4rem 0.85rem', borderRadius: '14px', fontSize: '0.8rem', fontWeight: 700, border: 'none', background: pomoMode === 'focus' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'focus' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          🎯 Focus Session
+                        </button>
+                        <button onClick={() => switchPomoMode('shortBreak')} style={{ padding: '0.4rem 0.85rem', borderRadius: '14px', fontSize: '0.8rem', fontWeight: 700, border: 'none', background: pomoMode === 'shortBreak' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'shortBreak' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          ☕ Short Break (5m)
+                        </button>
+                        <button onClick={() => switchPomoMode('longBreak')} style={{ padding: '0.4rem 0.85rem', borderRadius: '14px', fontSize: '0.8rem', fontWeight: 700, border: 'none', background: pomoMode === 'longBreak' ? 'var(--text-primary)' : 'var(--bg-elevated)', color: pomoMode === 'longBreak' ? 'var(--bg-surface)' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                          🌴 Long Break (15m)
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {pomoMode === 'focus' && (
+                      <div style={{ background: 'var(--bg-elevated)', padding: '0.85rem 1.25rem', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                          CUSTOMIZE FOCUS DURATION:
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {[15, 25, 30, 45, 60, 90].map(mins => (
+                            <button key={mins} onClick={() => switchPomoDuration(mins)} style={{
+                              padding: '0.4rem 0.85rem', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800,
+                              border: pomoDurationMins === mins ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                              background: pomoDurationMins === mins ? 'var(--accent-primary)' : 'var(--bg-surface)',
+                              color: pomoDurationMins === mins ? '#111214' : 'var(--text-primary)', cursor: 'pointer'
+                            }}>
+                              {mins}m
+                            </button>
+                          ))}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginLeft: '0.5rem' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Custom:</span>
+                            <input type="number" min="1" max="180" value={pomoDurationMins} onChange={e => switchPomoDuration(parseInt(e.target.value) || 25)} className="input" style={{ width: '75px', padding: '0.3rem 0.5rem', textAlign: 'center', fontWeight: 800 }} />
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>mins</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>📌 Target Problem:</span>
+                      <select value={pomoTargetProb} onChange={e => setPomoTargetProb(e.target.value)} className="input" style={{ flex: 1, maxWidth: '420px' }}>
+                        <option value="">General Focus / Deep Work Session</option>
+                        {problems.slice(0, 30).map(p => (
+                          <option key={p.id} value={`#${p.id} ${p.title}`}>#{p.id} {p.title} ({p.difficulty})</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'clamp(4.5rem, 11vw, 8.5rem)',
+                      fontWeight: 900,
+                      letterSpacing: '-0.03em',
+                      color: pomoRunning ? 'var(--accent-primary)' : 'var(--text-primary)',
+                      textAlign: 'center',
+                      margin: '1.5rem 0',
+                      lineHeight: 1,
+                      textShadow: pomoRunning ? '0 0 40px rgba(226, 247, 115, 0.3)' : 'none'
+                    }}>
+                      {formatPomoTimeHours(pomoTimeLeft)}
+                    </div>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', margin: '2rem 0 1rem 0' }}>
+                      <button onClick={() => setPomoRunning(r => !r)} className="btn btn-lime" style={{ fontSize: '1.2rem', padding: '1rem 2.5rem', fontWeight: 800 }}>
+                        {pomoRunning ? '⏸ PAUSE FOCUS' : '▶ START FOCUS SESSION'}
+                      </button>
+                      <button onClick={() => switchPomoMode(pomoMode)} className="btn" style={{ fontSize: '1rem', padding: '1rem 1.75rem', background: 'var(--bg-elevated)' }}>
+                        ↺ RESET TIMER
+                      </button>
+                    </div>
+                    
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                      gap: '1rem',
+                      marginTop: '2.5rem',
+                      paddingTop: '1.5rem',
+                      borderTop: '1px solid var(--border-subtle)'
+                    }}>
+                      <div style={{ background: 'var(--bg-elevated)', padding: '1.1rem', borderRadius: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>TOTAL FOCUS TIME</div>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '0.2rem' }}>
+                          {Math.floor(pomoTotalMinsFocused / 60)}h {pomoTotalMinsFocused % 60}m
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Focused today</div>
+                      </div>
+                      <div style={{ background: 'var(--bg-elevated)', padding: '1.1rem', borderRadius: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>COMPLETED SESSIONS</div>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--status-success)', marginTop: '0.2rem' }}>
+                          🍅 {pomoCompleted}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pomodoros completed</div>
+                      </div>
+                      <div style={{ background: 'var(--bg-elevated)', padding: '1.1rem', borderRadius: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>CURRENT DURATION</div>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '0.2rem' }}>
+                          {pomoDurationMins} mins
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Custom set length</div>
+                      </div>
+                      <div style={{ background: 'var(--bg-elevated)', padding: '1.1rem', borderRadius: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>FOCUS STATUS</div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: pomoRunning ? 'var(--accent-primary)' : 'var(--text-secondary)', marginTop: '0.5rem' }}>
+                          {pomoRunning ? '🔥 IN DEEP WORK' : '⏸️ READY'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="card">
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem', fontFamily: 'var(--font-display)' }}>
+                      📋 TODAY'S COMPLETED POMODORO HISTORY ({pomoLogs.length})
+                    </h3>
+                    {pomoLogs.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+                        No completed sessions yet today. Start your first custom Pomodoro above!
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {pomoLogs.map(log => (
+                          <div key={log.id} style={{
+                            background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px',
+                            padding: '0.85rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                          }}>
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>🍅 {log.problemTitle}</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                                Completed at {log.timeStr} &bull; {log.durationMins} mins focus
+                              </div>
+                            </div>
+                            <span className="badge badge-easy">✓ Completed</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'problems' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div className="card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+                      <div>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>DATA CATALOG</div>
+                        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0.1rem 0' }}>ALL {problems.length} LEETCODE PROBLEMS</h1>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)' }}>
+                        Showing {filteredProblems.length} matching problems
+                      </div>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem' }}>
+                      <input type="text" value={searchTerm} onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }} placeholder="Search title or ID #..." className="input" />
+                      <select value={filterDiff} onChange={e => { setFilterDiff(e.target.value); setCurrentPage(1); }} className="input">
+                        <option value="ALL">Difficulty: All</option>
+                        <option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option>
+                      </select>
+                      <select value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="input">
+                        <option value="ALL">Status: All</option>
+                        <option value="NOT_STARTED">Not Started</option><option value="SOLVED">Solved</option><option value="MASTERED">Mastered</option><option value="FAILED">Failed</option>
+                      </select>
+                      <select value={filterTopic} onChange={e => { setFilterTopic(e.target.value); setCurrentPage(1); }} className="input">
+                        <option value="ALL">Topic: All ({CANONICAL_TOPICS.length})</option>
+                        {CANONICAL_TOPICS.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                      <select value={pageSize} onChange={e => { setPageSize(parseInt(e.target.value)); setCurrentPage(1); }} className="input">
+                        <option value={50}>50 per page</option><option value={100}>100 per page</option><option value={0}>Show All (798)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="cmd-table">
+                        <thead>
+                          <tr>
+                            <th>#</th><th>TITLE</th><th>DIFFICULTY</th><th>TOPIC</th><th>PRIORITY</th><th>STATUS</th><th style={{ textAlign: 'right' }}>ACTION</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {paginatedProblems.map(prob => (
+                            <tr key={prob.id}>
+                              <td className="mono">#{prob.id}</td>
+                              <td style={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => setSelectedProblem(prob)}>{prob.title}</td>
+                              <td><span className={`badge badge-${prob.difficulty.toLowerCase()}`}>{prob.difficulty}</span></td>
+                              <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{prob.topic}</td>
+                              <td className="mono">{computeProblemPriority(prob)}</td>
+                              <td className="mono" style={{ color: prob.status === 'MASTERED' ? 'var(--status-success)' : prob.status === 'SOLVED' ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{prob.status}</td>
+                              <td style={{ textAlign: 'right' }}>
+                                <a href={prob.url} target="_blank" rel="noopener noreferrer" className="btn btn-sm">LEETCODE &rarr;</a>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {pageSize > 0 && totalPages > 1 && (
+                      <div style={{ padding: '1rem 1.25rem', background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))} className="btn btn-sm" style={{ opacity: currentPage === 1 ? 0.4 : 1 }}>&larr; PREVIOUS</button>
+                        <div className="mono" style={{ fontSize: '0.8rem' }}>Page {currentPage} of {totalPages} ({filteredProblems.length} problems)</div>
+                        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} className="btn btn-sm" style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}>NEXT &rarr;</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'graph' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>INTERACTIVE DSA KNOWLEDGE GRAPH</h1>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Visual connections between DSA Topics &rarr; Reusable Patterns &rarr; LeetCode Problems.</p>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                    {[
+                      { topic: 'Arrays & Two Pointers', pattern: 'Monotonic Stack', problems: ['Daily Temperatures', 'Next Greater Element I', 'Online Stock Span', 'Largest Rectangle in Histogram'] },
+                      { topic: 'Sliding Window', pattern: 'Variable Size Window', problems: ['Longest Substring Without Repeating Characters', 'Longest Repeating Character Replacement', 'Minimum Window Substring'] },
+                      { topic: 'Dynamic Programming', pattern: '0/1 Knapsack & Subset Sum', problems: ['Coin Change', 'Partition Equal Subset Sum', 'Target Sum', 'House Robber'] },
+                      { topic: 'Graphs', pattern: 'Topological Sort', problems: ['Course Schedule', 'Course Schedule II', 'Alien Dictionary'] }
+                    ].map(node => (
+                      <div key={node.pattern} className="graph-node">
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>{node.topic}</div>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0.25rem 0 0.75rem 0' }}>{node.pattern}</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                          {node.problems.map(pName => (
+                            <div key={pName} style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <span>&rarr;</span> <span>{pName}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'mistakes' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>MISTAKE DATABASE & FREQUENCY</h1>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Identify and target recurring execution pitfalls.</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                    {MISTAKE_CATEGORIES.map(cat => (
+                      <div key={cat} className="card-elevated" style={{ borderRadius: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>CATEGORY</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 700, margin: '0.2rem 0' }}>{cat}</div>
+                        <div className="num-stat" style={{ fontSize: '1.4rem', color: 'var(--status-danger)' }}>
+                          {mistakes[cat] || 0} <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>occurrences</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => alert('Starting Mistake Review Drill targeting Off-by-one & boundary errors...')} className="btn btn-lime" style={{ width: '100%', padding: '0.75rem' }}>
+                    🎯 START TARGETED MISTAKE REVIEW DRILL
+                  </button>
+                </div>
+              )}
+              
+              {activeTab === 'collections' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>COMPANY PRACTICE SETS</h1>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    {COMPANY_TAGS.map(company => (
+                      <div key={company} className="card-elevated" style={{ borderRadius: '16px' }}>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{company}</h3>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.5rem 0 1rem 0' }}>Top tagged interview questions for {company}.</p>
+                        <button onClick={() => { setSearchTerm(company); setActiveTab('problems'); }} className="btn btn-sm btn-lime">View Set &rarr;</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'review' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>SPACED REPETITION REVIEW QUEUE</h1>
+                  {scheduleData.dueReviews.length === 0 ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>No reviews due today! All patterns are fresh in memory.</div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                      {scheduleData.dueReviews.map(prob => (
+                        <div key={prob.id} className="card-elevated" style={{ borderRadius: '16px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                            <span className="mono">#{prob.id}</span>
+                            <span className={`badge badge-${prob.difficulty.toLowerCase()}`}>{prob.difficulty}</span>
+                          </div>
+                          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem' }}>{prob.title}</h3>
+                          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                            <button onClick={() => handleSolve(prob, 'Strong')} className="btn btn-sm btn-lime" style={{ flex: 1 }}>[REMEMBER]</button>
+                            <button onClick={() => handleFail(prob)} className="btn btn-sm" style={{ flex: 1, color: 'var(--status-danger)' }}>[FORGOTTEN]</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {activeTab === 'progress' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>EXPECTED VS ACTUAL PROGRESS</h1>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                    <div className="card-elevated">
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>EXPECTED SOLVED TODAY</div>
+                      <div className="num-stat" style={{ fontSize: '1.6rem', color: 'var(--text-secondary)' }}>{scheduleData.pace.expectedSolved}</div>
+                    </div>
+                    <div className="card-elevated">
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>ACTUAL SOLVED</div>
+                      <div className="num-stat" style={{ fontSize: '1.6rem', color: 'var(--status-success)' }}>{solvedTotal}</div>
+                    </div>
+                    <div className="card-elevated">
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>RECOMMENDED PACE</div>
+                      <div className="num-stat" style={{ fontSize: '1.6rem', color: 'var(--text-primary)' }}>{scheduleData.pace.recommendedPace} / day</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {activeTab === 'analytics' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>TOPIC MASTERY BARS</h1>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {CANONICAL_TOPICS.map(topic => {
+                      const topicProbs = problems.filter(p => p.topic === topic);
+                      const solved = topicProbs.filter(p => p.status === 'SOLVED' || p.status === 'MASTERED').length;
+                      const pct = topicProbs.length > 0 ? Math.round((solved / topicProbs.length) * 100) : 0;
+                      const filled = Math.round((pct / 100) * 12);
+                      const bar = '█'.repeat(filled) + '░'.repeat(12 - filled);
+                      return (
+                        <div key={topic} className="card-elevated" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '16px' }}>
+                          <span style={{ fontWeight: 700 }}>{topic}</span>
+                          <span className="mono" style={{ color: pct >= 50 ? 'var(--status-success)' : 'var(--status-warning)' }}>{bar} {pct}% ({solved}/{topicProbs.length})</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {activeTab === 'goals' && (
+                <div className="card">
+                  <h1 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1.5rem' }}>ROADMAP MILESTONES</h1>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 0' }}>
+                    {[100, 200, 300, 400, 500, 600, 700, 798].map(target => (
+                      <div key={target} style={{ textAlign: 'center' }}>
+                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: solvedTotal >= target ? 'var(--status-success)' : 'var(--bg-elevated)', color: '#0B0D0F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, margin: '0 auto 0.5rem auto' }}>
+                          {solvedTotal >= target ? '✓' : ''}
+                        </div>
+                        <span className="mono" style={{ fontSize: '0.8rem', fontWeight: 700 }}>{target}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </main>
+            
+            {showCmdPalette && (
+              <div className="modal-overlay" onClick={() => setShowCmdPalette(false)}>
+                <div className="modal-content" style={{ maxWidth: '560px', padding: '1.25rem' }} onClick={e => e.stopPropagation()}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🔍</span>
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Type a command or search problem..."
+                      className="input"
+                      style={{ border: 'none', background: 'transparent', fontSize: '1.05rem', width: '100%' }}
+                      onChange={e => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    {[
+                      { label: "Today's Run", action: () => { setActiveTab('today'); setShowCmdPalette(false); } },
+                      { label: 'Time-Budget Session (60m / 90m)', action: () => { setShowTimeBudget(true); setShowCmdPalette(false); } },
+                      { label: 'Open Knowledge Graph', action: () => { setActiveTab('graph'); setShowCmdPalette(false); } },
+                      { label: 'Mistake Database', action: () => { setActiveTab('mistakes'); setShowCmdPalette(false); } },
+                      { label: 'Toggle Theme (Bento / Dark Command)', action: () => { toggleTheme(); setShowCmdPalette(false); } }
+                    ].map(cmd => (
+                      <button key={cmd.label} onClick={cmd.action} className="btn" style={{ justifyContent: 'flex-start', padding: '0.65rem', borderRadius: '12px' }}>
+                        &gt; {cmd.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {blindResolveProblem && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ padding: '1.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <h2>🎯 BLIND RE-SOLVE: #{blindResolveProblem.id} {blindResolveProblem.title}</h2>
+                    <button onClick={() => setBlindResolveProblem(null)} className="btn btn-sm">✕</button>
+                  </div>
+                  <div style={{ background: 'var(--bg-elevated)', padding: '1rem', borderRadius: '16px', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
+                    Previous notes and solutions are hidden. Focus on independent recall and timing.
+                  </div>
+                  <a href={blindResolveProblem.url} target="_blank" rel="noopener noreferrer" className="btn btn-lime" style={{ width: '100%', marginBottom: '1rem' }}>
+                    OPEN ON LEETCODE &rarr;
+                  </a>
+                  <button onClick={() => {
+                    handleSolve(blindResolveProblem, 'Strong', 1200);
+                    alert(`Blind Re-Solve Complete! Speedup: 43% faster than previous solve!`);
+                    setBlindResolveProblem(null);
+                  }} className="btn btn-primary" style={{ width: '100%', padding: '0.75rem' }}>
+                    SUBMIT BLIND RE-SOLVE RESULT
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {showTimeBudget && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ padding: '1.75rem', maxWidth: '480px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <h2>⏱️ TIME-BUDGET SESSION BUILDER</h2>
+                    <button onClick={() => setShowTimeBudget(false)} className="btn btn-sm">✕</button>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Select your available time window for today:</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                    {[30, 60, 90, 120].map(mins => (
+                      <button key={mins} onClick={() => {
+                        alert(`Building optimized ${mins}-minute session (1 Warmup + 2 Mediums + 1 Revision)...`);
+                        setShowTimeBudget(false);
+                      }} className="btn btn-lime" style={{ padding: '0.85rem', fontSize: '1rem' }}>
+                        {mins} MINUTES
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {showDailyBrief && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ padding: '2rem', maxWidth: '520px' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700 }}>GOOD MORNING</div>
+                  <h1 style={{ fontSize: '1.6rem', fontWeight: 800, margin: '0.35rem 0 1rem 0' }}>TODAY'S RUN BRIEF</h1>
+                  <div style={{ background: 'var(--bg-elevated)', padding: '1rem', borderRadius: '16px', marginBottom: '1.25rem', fontSize: '0.875rem' }}>
+                    <div><strong>5 Problems Scheduled</strong> (2 new, 2 pattern practice, 1 revision)</div>
+                    <div style={{ color: 'var(--text-secondary)', marginTop: '0.35rem' }}>Est. Time: 2h 15m &bull; Focus: Sliding Window & DP</div>
+                  </div>
+                  <button onClick={() => setShowDailyBrief(false)} className="btn btn-lime" style={{ width: '100%', padding: '0.75rem' }}>
+                    START TODAY'S RUN &rarr;
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {selectedProblem && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ padding: '1.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <h2>#{selectedProblem.id} {selectedProblem.title}</h2>
+                    <button onClick={() => setSelectedProblem(null)} className="btn btn-sm">✕</button>
+                  </div>
+                  <a href={selectedProblem.url} target="_blank" rel="noopener noreferrer" className="btn btn-lime" style={{ width: '100%', marginBottom: '1rem' }}>OPEN ON LEETCODE &rarr;</a>
+                  
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>Log Mistake Category (Optional)</label>
+                    <select id="mistakeSelect" className="input" style={{ width: '100%' }}>
+                      <option value="">No mistake / Clean solve</option>
+                      {MISTAKE_CATEGORIES.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem' }}>
+                    <button onClick={() => {
+                      const cat = document.getElementById('mistakeSelect').value;
+                      handleSolve(selectedProblem, 'Strong', 1800, cat);
+                      setSelectedProblem(null);
+                    }} className="btn btn-lime" style={{ flex: 1 }}>MARK SOLVED</button>
+                    <button onClick={() => { handleFail(selectedProblem); setSelectedProblem(null); }} className="btn" style={{ flex: 1, color: 'var(--status-danger)' }}>MARK FAILED</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {showStreakModal && (
+              <div className="modal-overlay" style={{ zIndex: 110 }}>
+                <div className="modal-content" style={{ maxWidth: '540px', width: '100%', padding: '1.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', fontWeight: 700 }}>MASTERY & STREAK PROFILE</div>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0.2rem 0', fontFamily: 'var(--font-display)' }}>
+                        🔥 MASTERY RANK & STREAK
+                      </h2>
+                    </div>
+                    <button onClick={() => setShowStreakModal(false)} className="btn btn-sm" style={{ border: 'none', background: 'transparent', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+                  </div>
+                  <div style={{ background: 'var(--bg-elevated)', borderRadius: '16px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>CURRENT RANK</span>
+                      <span className="badge badge-medium" style={{ fontSize: '0.85rem', padding: '0.2rem 0.6rem' }}>{userStats.rank}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '0.5rem 0' }}>
+                      <span style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>{userStats.totalXP} <span style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)' }}>XP</span></span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Next Rank: {userStats.nextLevelXP} XP</span>
+                    </div>
+                    
+                    
+                    <div style={{ width: '100%', height: '8px', background: 'var(--border-subtle)', borderRadius: '4px', overflow: 'hidden', marginTop: '0.5rem' }}>
+                      <div style={{ width: `${Math.min(100, (userStats.totalXP / userStats.nextLevelXP) * 100)}%`, height: '100%', background: 'var(--accent-primary)', transition: 'width 0.4s ease' }} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '0.85rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>🔥 Active</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Daily Momentum Streak</div>
+                    </div>
+                    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '0.85rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--status-success)' }}>{solvedTotal}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Problems Solved</div>
+                    </div>
+                  </div>
+                  <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    🏆 UNLOCKED MILESTONE BADGES
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
+                    <div style={{ background: solvedTotal >= 1 ? 'rgba(226, 247, 115, 0.1)' : 'var(--bg-elevated)', border: `1px solid ${solvedTotal >= 1 ? 'var(--accent-primary)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '0.65rem 0.85rem', opacity: solvedTotal >= 1 ? 1 : 0.45 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>🎯 First Blood</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Solved 1st problem</div>
+                    </div>
+                    <div style={{ background: solvedTotal >= 10 ? 'rgba(226, 247, 115, 0.1)' : 'var(--bg-elevated)', border: `1px solid ${solvedTotal >= 10 ? 'var(--accent-primary)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '0.65rem 0.85rem', opacity: solvedTotal >= 10 ? 1 : 0.45 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>⚡ Pattern Pioneer</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Solved 10 problems</div>
+                    </div>
+                    <div style={{ background: masteredTotal >= 5 ? 'rgba(226, 247, 115, 0.1)' : 'var(--bg-elevated)', border: `1px solid ${masteredTotal >= 5 ? 'var(--accent-primary)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '0.65rem 0.85rem', opacity: masteredTotal >= 5 ? 1 : 0.45 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>🧠 Master Mind</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Mastered 5 problems</div>
+                    </div>
+                    <div style={{ background: solvedTotal >= 100 ? 'rgba(226, 247, 115, 0.1)' : 'var(--bg-elevated)', border: `1px solid ${solvedTotal >= 100 ? 'var(--accent-primary)' : 'var(--border-subtle)'}`, borderRadius: '12px', padding: '0.65rem 0.85rem', opacity: solvedTotal >= 100 ? 1 : 0.45 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>👑 Centurion</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Solved 100 problems</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {showOnboarding && (
+              <div className="modal-overlay">
+                <div className="modal-content" style={{ padding: '2rem', maxWidth: '480px' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 700 }}>DSA RUN</div>
+                  <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0' }}>798 problems.<br />6 months.<br />One system.</h1>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Adaptive personal training command center for completing your 6-month LeetCode mastery run.</p>
+                  <button onClick={() => { savePlan({ ...plan, is_onboarded: true }); setShowOnboarding(false); }} className="btn btn-lime" style={{ width: '100%', padding: '0.75rem' }}>START YOUR RUN &rarr;</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
